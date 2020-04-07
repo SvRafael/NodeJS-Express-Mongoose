@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 //PERSISTENCIA
 mongoose.connect(
-  "mongodb+srv://leotecco:leotecco@cluster0-8hzev.mongodb.net/test?retryWrites=true&w=majority",
+  "mongodb+srv://Rafael3:rafael33@cluster0-hjxoz.mongodb.net/test?retryWrites=true&w=majority",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -20,10 +20,10 @@ app.use(bodyParser.json());
 const PORT = process.env.port || 3000;
 
 //ROTAS
-const productRoute = require("./routes/product-routes");
-const clientRoute = require("./routes/client-route");
-const vendaRoute = require("./routes/venda-route");
-const indexRoute = require("./routes/index-routes");
+const productRoute = require("./src/routes/product-routes");
+const clientRoute = require("./src/routes/client-route");
+const vendaRoute = require("./src/routes/venda-route");
+const indexRoute = require("./src/routes/index-routes");
 
 //Vincular a aplicacao(app) com o motor de rotas
 app.use("/api", indexRoute);
