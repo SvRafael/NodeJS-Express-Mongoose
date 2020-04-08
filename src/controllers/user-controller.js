@@ -1,80 +1,84 @@
 const User = require('../app/models/user');
+const repository = require('../repositories/user-repository');
 
-exports.post = function(req,res){
-        var user = new User();
-        user.nome = req.body.nome;
-        user.email = req.body.email;
-        user.senha = req.body.senha;
+exports.post = async (req, res) => {
 
-        user.save(function(error){
-            if(error)
-                res.send("Erro ao salvar usuário" + error);
+    try {
+        await repository.post({
+            nome: req.body.nome,
+            email: req.body.email,
+            senha: req.body.senha
+        });
+        res.status(201).send({
+            message: "Usuário inserido com sucesso"
+        })
+    } catch (error) {
+        res.status(500).send({
+            message: "Falha ao inserir um usuário",
+            erro: error
+        });
 
-            res.status(201).json({message:'Usuário inserido com sucesso'});
+    }}
+
+exports.get = async (req, res) => {
+        try {
+            var data = await repository.get();
+               
+            res.json({
+                data,
+                count: "Existem " + data.length + " Usuários"
+            });
+
+        } catch (error) {
+            res.status(500).send({
+                message: "Falha na requisição",
+                erro: error
+            });
+        } 
+    
+}
+
+exports.getById = async (req, res) => {
+    try {
+        const id = req.params.userId;
+        var data = await repository.getById(id);
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({
+            message:"Falha na requisição",
+            erro: error
         });
     }
+}
 
-exports.get = function(req, res){
-    User.find(function(err, users){
-        if(err)
-            res.send(err);
-        
-        res.status(200).json({
-            message: 'Usuários retornados',
-            usuarios: users
+exports.put = async (req, res) => {
+    try {
+        const id = req.params.userId;    
+        const data = await repository.put(id, req.body);
+        res.status(200).send({
+            message:"Usuário atualizado com sucesso",
+            dados: data
+        })
+    } catch (error) {
+         res.status(500).send({
+            message: "Falha na requisição",
+            erro: error
         });
-    });
+    }
 }
 
-// exports.getById = function(req, res){
-//     const id = req.params.userId
-
-//     Produto.findById(id, function(err, usuario){
-//         if (err) {
-//             res.send(err);
-//         } else if (usuario === null) {
-//             res.status(400).json({
-//                 message: 'Usuário não encontrado',
-//             });    
-//         } else {
-//             res.status(200).json({
-//                 message: 'Usuário retornados',
-//                 usuario: usuario
-//             });
-//         }
-//     });
-// }
-
-exports.put = function(req, res){
-    const id = req.params.userId
-
-    User.findById(id, function(err, usuario){
-        if (err) {
-            res.send(err);
-        } else if (usuario === null) {
-            res.status(400).json({
-                message: 'Usuário não encontrado',
-            });    
-        } else {
-            user.nome = req.body.nome;
-            user.email = req.body.email;
-            user.senha = req.body.senha;
-
-            user.save(function(error){
-                if(error)
-                    res.send("Erro ao tentar atualizar um usuário" + error);
-
-                res.status(201).json({message:'Usuário atualizado com sucesso'});
-            });
-        }
-    });
-}
-
-exports.delete =  function(req, res){
-    const id = req.params.productId
-
-    Produto.findByIdAndRemove(id, function(err){
-        if(err) return res.status(500).send("Erro ao tentar atualizar um usuário" + error);
-        res.status(201).json({message:'Usuário removido com sucesso'});
-    });
+exports.delete = async (req, res) =>{
+    try {
+        const id = req.params.userId;  
+        await repository.delete(id);
+        res.status(200).send({
+            message:"Usuário removido com sucesso",
+        })
+    } catch (error) {
+         res.status(500).send({
+            message: "Falha na requisição",
+            erro: error
+        });
+    }
+    
 }

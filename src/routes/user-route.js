@@ -6,7 +6,7 @@ router.post("/", userController.post);
 
 router.get("/", userController.get);
 
-// router.getById("/:userId", userController.getById);
+router.get("/:userId", userController.getById);
 
 router.put("/:userId", userController.put);
 

@@ -1,81 +1,79 @@
 const Produto = require('../app/models/product');
+const repository = require('../repositories/product-repository');
 
-exports.post = function(req,res){
-        var produto = new Produto();
-        produto.nome = req.body.nome;
-        produto.preco = req.body.preco;
-        produto.descricao = req.body.descricao;
+exports.post = async (req, res) => {
 
-        produto.save(function(error){
-            if(error)
-                res.send("Erro ao salvar produto" + error);
-
-            res.status(201).json({message:'Produto inserido com sucesso'});
+    try {
+        await repository.post({
+            nome: req.body.nome,
+            preco: req.body.preco,
+            descricao: req.body.descricao
+        });
+        res.status(201).send({
+            message: "Produto inserido com sucesso"
+        })
+    } catch (error) {
+        res.status(500).send({
+            message: "Falha ao inserir um produto",
+            erro: error
         });
 
+    }}
+
+exports.get = async (req, res) => {
+        try {
+            var data = await repository.get();
+            res.status(200).send(data);
+        } catch (error) {
+            res.status(500).send({
+                message: "Falha na requisição",
+                erro: error
+            });
+        } 
+    
+}
+
+exports.getById = async (req, res) => {
+    try {
+        const id = req.params.productId;
+        var data = await repository.getById(id);
+        res.status(200).send(data);
+    } catch (error) {
+        res.status(500).send({
+            message:"Falha na requisição",
+            erro: error
+        });
     }
+}
 
-exports.get = function(req, res){
-    Produto.find(function(err, prods){
-        if(err)
-            res.send(err);
-        
-        res.status(200).json({
-            message: 'Produtos retornados',
-            produtos: prods
+exports.put = async (req, res) => {
+    try {
+        const id = req.params.productId;    
+        const data = await repository.put(id, req.body);
+        res.status(200).send({
+            message:"Produto atualizado com sucesso",
+            dados: data
+        })
+    } catch (error) {
+         res.status(500).send({
+            message: "Falha na requisição",
+            erro: error
         });
-    });
+    }
 }
 
-exports.getById = function(req, res){
-    const id = req.params.productId
-
-    Produto.findById(id, function(err, produto){
-        if (err) {
-            res.send(err);
-        } else if (produto === null) {
-            res.status(400).json({
-                message: 'Produto não encontrado',
-            });    
-        } else {
-            res.status(200).json({
-                message: 'Produtos retornados',
-                produto: produto
-            });
-        }
-    });
-}
-
-exports.put = function(req, res){
-    const id = req.params.productId
-
-    Produto.findById(id, function(err, produto){
-        if (err) {
-            res.send(err);
-        } else if (produto === null) {
-            res.status(400).json({
-                message: 'Produto não encontrado',
-            });    
-        } else {
-            produto.nome = req.body.nome;
-            produto.preco = req.body.preco;
-            produto.descricao = req.body.descricao;
-
-            produto.save(function(error){
-                if(error)
-                    res.send("Erro ao tentar atualizar um produto" + error);
-
-                res.status(201).json({message:'Produto atualizado com sucesso'});
-            });
-        }
-    });
-}
-
-exports.delete = function(req, res){
-    const id = req.params.productId
-
-    Produto.findByIdAndRemove(id, function(err){
-        if(err) return res.status(500).send("Erro ao tentar atualizar um produto" + error);
-        res.status(201).json({message:'Produto removido com sucesso'});
-    });
+exports.delete = async (req, res) =>{
+    try {
+        const id = req.params.productId;  
+        await repository.delete(id);
+        res.status(200).send({
+            message:"Produto removido com sucesso",
+        })
+    } catch (error) {
+         res.status(500).send({
+            message: "Falha na requisição",
+            erro: error
+        });
+    }
+    
 }
