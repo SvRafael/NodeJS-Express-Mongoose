@@ -42,7 +42,17 @@ exports.getById = async (req, res) => {
     try {
         const id = req.params.userId;
         var data = await repository.getById(id);
-        res.status(200).send(data);
+        if(data){
+        res.status(200).json({
+        message: "Usuário encontrado com sucesso!",
+        data,
+        });
+
+        return;
+    }
+        res.status(404).json({
+      message: "Usuário não encontrado!",
+    });
     } catch (error) {
         res.status(500).send({
             message:"Falha na requisição",
