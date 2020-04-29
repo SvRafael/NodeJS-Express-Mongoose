@@ -1,5 +1,6 @@
 const User = require('../app/models/user');
 const repository = require('../repositories/user-repository');
+const signupRepository = require('../repositories/signup-repository');
 
 exports.post = async (req, res) => {
 
@@ -92,3 +93,37 @@ exports.delete = async (req, res) =>{
     }
     
 }
+
+//Register
+exports.userRegister = async function(req, res){
+    try {
+        //chamar repositorio para registrar um usuario
+
+    } catch (error) {
+        
+    }
+}
+
+//Login
+exports.login = async (req, res) => {
+  try {
+    const autheticated = await userRepository.login(req.body);
+
+    if (autheticated) {
+      res.status(200).json({
+        message: "Login realizado com sucesso!",
+        autheticated,
+      });
+
+      return;
+    }
+
+    res.status(401).json({
+      message: "Email e/ou senha inválidos!",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({ message: "Erro ao realizar login!", error });
+  }
+};
