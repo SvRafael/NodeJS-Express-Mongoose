@@ -4,9 +4,9 @@ const bcrypt = require('bcrypt');
 
 var userSchema = new Schema({
     email: {type: String, default:'', required:true},
-    password: {type: String, default:'', required: true},
-    idDeleted: {type:Boolean, default: false},
-    signUpDate: {type:Date, default: Date.now()}
+    password: {type: String, default:'', required:true},
+    isDeleted: {type: Boolean, default:false},
+    signUpDate: {type: Date, defaut: Date.now()}
 });
 
 //Registro
@@ -19,4 +19,4 @@ userSchema.methods.ValidPassword = function(password){
     return bcrypt.compareSync(password, this.password)
 };
 
-module.exports = mongoose.model('Usuario', userSchema);
+module.exports = mongoose.model('User', userSchema);

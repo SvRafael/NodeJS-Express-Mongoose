@@ -26,6 +26,7 @@ const vendaRoute = require("./src/routes/venda-route");
 const indexRoute = require("./src/routes/index-routes");
 const userRoute = require("./src/routes/user-route");
 var signupRoute = require("./src/routes/signup-route");
+var loginRoute = require("./src/routes/login-route");
 
 //Vincular a aplicacao(app) com o motor de rotas
 app.use("/api", indexRoute);
@@ -34,6 +35,7 @@ app.use("/api/client", clientRoute);
 app.use("/api/venda", vendaRoute);
 app.use("/api/user", userRoute);
 app.use("/api/registrar", signupRoute);
+app.use("/api/login", loginRoute);
 
 app.listen(PORT, () => {
   console.log("server on");

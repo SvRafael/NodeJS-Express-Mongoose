@@ -1,14 +1,27 @@
 const User = require('../app/models/user');
-const repository = require('../repositories/user-repository');
+const userRepository = require('../repositories/user-repository');
 const signupRepository = require('../repositories/signup-repository');
+
+
+exports.login = async (req, res) => {
+    try {
+        const token = await userRepository.login(req.body.email, req.body.password);
+        res.status(200).send({ auth: true, token: token });
+    } catch (e) {
+        if (!e.status) {
+            res.status(500).json({ error: { code: 'Erro Desconhecido.', message: 'Um erro desconhecido ocorreu.' } });
+        } else {
+            res.status(e.status).json({ error: {code: e.code, message: e.message}});
+        }
+    }
+}
 
 exports.post = async (req, res) => {
 
     try {
         await repository.post({
-            nome: req.body.nome,
             email: req.body.email,
-            senha: req.body.senha
+            password: req.body.password
         });
         res.status(201).send({
             message: "Usuário inserido com sucesso"
@@ -104,26 +117,26 @@ exports.userRegister = async function(req, res){
     }
 }
 
-//Login
-exports.login = async (req, res) => {
-  try {
-    const autheticated = await userRepository.login(req.body);
+// //Login
+// exports.login = async (req, res) => {
+//   try {
+//     const autheticated = await userRepository.login(req.body);
 
-    if (autheticated) {
-      res.status(200).json({
-        message: "Login realizado com sucesso!",
-        autheticated,
-      });
+//     if (autheticated) {
+//       res.status(200).json({
+//         message: "Login realizado com sucesso!",
+//         autheticated,
+//       });
 
-      return;
-    }
+//       return;
+//     }
 
-    res.status(401).json({
-      message: "Email e/ou senha inválidos!",
-    });
-  } catch (error) {
-    console.log(error);
+//     res.status(401).json({
+//       message: "Email e/ou senha inválidos!",
+//     });
+//   } catch (error) {
+//     console.log(error);
 
-    res.status(500).json({ message: "Erro ao realizar login!", error });
-  }
-};
+//     res.status(500).json({ message: "Erro ao realizar login!", error });
+//   }
+// };
